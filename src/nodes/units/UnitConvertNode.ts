@@ -10,7 +10,7 @@ export class UnitConvertNode extends BaseNode {
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [
-        { name: 'Value', acceptsType: 'core:any' }
+        { name: 'Value', acceptsType: ['core:string', 'core:number'] }
     ];
     
     readonly outputs: OutputDefinition[] = [

@@ -5,3 +5,9 @@ export const MathCategory: NodeCategory = {
     accent: 'indigo-400', 
     packageId: 'com.tracereactive.math' 
 };
+
+export const MatrixMathCategory: NodeCategory = {
+    name: 'Matrix Math',
+    accent: 'indigo-500',
+    packageId: 'com.tracereactive.math'
+};

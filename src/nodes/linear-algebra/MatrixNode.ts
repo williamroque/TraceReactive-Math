@@ -1,12 +1,12 @@
 import { BaseNode } from '@tracereactive/types';
 import type { InputDefinition, OutputDefinition, PropertyDefinition } from '@tracereactive/types';
-import { MathCategory } from '../../category';
+import { MatrixMathCategory } from '../../category';
 import * as math from 'mathjs';
 
 export class MatrixNode extends BaseNode {
     readonly typeId = 'math-matrix';
     readonly displayName = 'Matrix';
-    readonly category = MathCategory;
+    readonly category = MatrixMathCategory;
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [
@@ -14,18 +14,31 @@ export class MatrixNode extends BaseNode {
     ];
     
     readonly outputs: OutputDefinition[] = [
-        { name: 'Matrix', outputType: 'core:any' },
+        { name: 'Matrix', outputType: 'math:matrix' },
         { name: 'Array', outputType: 'core:array' }
     ];
     
     readonly properties: PropertyDefinition[] = [
+        { name: 'elements', label: 'Elements (CSV)', type: 'string', defaultValue: '' },
         { name: 'reshapeX', label: 'Reshape X', type: 'number', defaultValue: 0 },
         { name: 'reshapeY', label: 'Reshape Y', type: 'number', defaultValue: 0 }
     ];
 
     async evaluate(inputs: Record<string, any>, properties: Record<string, any>): Promise<Record<string, any>> {
-        const arr = inputs['Array'];
-        if (!Array.isArray(arr)) return { 'Matrix': null, 'Array': null };
+        let arr = inputs['Array'];
+        
+        if (!Array.isArray(arr)) {
+            const elementsStr = properties['elements'];
+            if (typeof elementsStr === 'string' && elementsStr.trim() !== '') {
+                arr = elementsStr.split(',').map((s: string) => {
+                    const val = s.trim();
+                    const num = Number(val);
+                    return isNaN(num) ? val : num;
+                });
+            } else {
+                return { 'Matrix': null, 'Array': null };
+            }
+        }
 
         try {
             let m = math.matrix(arr);
@@ -37,7 +50,7 @@ export class MatrixNode extends BaseNode {
             }
 
             return {
-                'Matrix': m,
+                'Matrix': m.toArray(),
                 'Array': m.toArray()
             };
         } catch (e) {

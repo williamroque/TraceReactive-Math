@@ -9,7 +9,7 @@ export class LatexTemplateNode extends BaseNode {
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [];
-    readonly dynamicInputs = { baseName: 'Var', acceptsType: 'core:any' };
+    readonly dynamicInputs = { baseName: 'Var', acceptsType: ['core:string', 'core:number', 'math:matrix'] };
     
     readonly outputs: OutputDefinition[] = [
         { name: 'LaTeX', outputType: 'core:string' }

@@ -9,7 +9,14 @@ import { ExpressionToLatexNode } from './nodes/latex/ExpressionToLatexNode';
 import { LatexRenderNode } from './nodes/latex/LatexRenderNode';
 import { LatexTemplateNode } from './nodes/latex/LatexTemplateNode';
 import { MatrixNode } from './nodes/linear-algebra/MatrixNode';
-import { MatrixOperationNode } from './nodes/linear-algebra/MatrixOperationNode';
+import { MatrixDeterminantNode } from './nodes/linear-algebra/MatrixDeterminantNode';
+import { MatrixInverseNode } from './nodes/linear-algebra/MatrixInverseNode';
+import { MatrixTransposeNode } from './nodes/linear-algebra/MatrixTransposeNode';
+import { MatrixTraceNode } from './nodes/linear-algebra/MatrixTraceNode';
+import { MatrixAddNode } from './nodes/linear-algebra/MatrixAddNode';
+import { MatrixMultiplyNode } from './nodes/linear-algebra/MatrixMultiplyNode';
+import { MatrixDotProductNode } from './nodes/linear-algebra/MatrixDotProductNode';
+import { MatrixCrossProductNode } from './nodes/linear-algebra/MatrixCrossProductNode';
 import { UnitConvertNode } from './nodes/units/UnitConvertNode';
 import type { TraceReactiveAPI } from '@tracereactive/types';
 
@@ -27,7 +34,14 @@ const nodes = [
     new LatexRenderNode(),
     new LatexTemplateNode(),
     new MatrixNode(),
-    new MatrixOperationNode(),
+    new MatrixDeterminantNode(),
+    new MatrixInverseNode(),
+    new MatrixTransposeNode(),
+    new MatrixTraceNode(),
+    new MatrixAddNode(),
+    new MatrixMultiplyNode(),
+    new MatrixDotProductNode(),
+    new MatrixCrossProductNode(),
     new UnitConvertNode()
 ];
 
