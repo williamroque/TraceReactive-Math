@@ -21,7 +21,7 @@ export class ExpressionToLatexNode extends BaseNode {
         { name: 'implicit', label: 'Implicit Multiplication', type: 'select' as any, options: [
             { value: 'hide', label: 'Hide' },
             { value: 'space', label: 'Space' },
-            { value: '\\cdot', label: 'Dot' }
+            { value: 'cdot', label: 'Dot (·)' }
         ], defaultValue: 'hide' }
     ];
 
@@ -34,7 +34,28 @@ export class ExpressionToLatexNode extends BaseNode {
 
         try {
             const node = math.parse(exprStr);
-            const tex = node.toTex({ implicit });
+
+            // mathjs toTex only distinguishes 'hide' (outputs ~) vs everything-else (outputs \cdot).
+            // For 'hide' and 'space' we start from the 'hide' output and replace the ~ joiners.
+            // For 'cdot' we use 'show' which natively emits \cdot.
+            let tex: string;
+            if (implicit === 'cdot') {
+                // Let mathjs render explicit \cdot for all multiplications
+                tex = node.toTex({ implicit: 'show' });
+                // Also replace bare ~ from any remaining implicit nodes
+                tex = tex.replace(/~/g, ' \\cdot ');
+            } else if (implicit === 'space') {
+                tex = node.toTex({ implicit: 'hide' });
+                // Replace ~ hairspace with a medium space, and strip explicit \cdot
+                tex = tex.replace(/~/g, '\\;');
+                tex = tex.replace(/\\cdot/g, '\\;');
+            } else {
+                // 'hide' — strip both ~ and \cdot so terms are adjacent
+                tex = node.toTex({ implicit: 'hide' });
+                tex = tex.replace(/~/g, '');
+                tex = tex.replace(/\s*\\cdot\s*/g, '');
+            }
+
             return { 'LaTeX': tex };
         } catch (e) {
             console.error('Error generating LaTeX:', e);
