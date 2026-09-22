@@ -1,0 +1,8 @@
+{
+  "id": "com.tracereactive.math",
+  "name": "Math",
+  "version": "1.0.0",
+  "description": "Computer Algebra System, numerical evaluation, linear algebra, and robust LaTeX rendering.",
+  "main": "dist/index.js",
+  "permissions": []
+}
