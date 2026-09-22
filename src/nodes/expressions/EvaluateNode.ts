@@ -12,15 +12,16 @@ export class EvaluateNode extends BaseNode {
     
     readonly inputs: InputDefinition[] = [
         { name: 'Expression', acceptsType: 'core:expression' },
-        { name: 'Data', acceptsType: 'any' }
+        { name: 'Data', acceptsType: 'core:number-array' }
     ];
     
     readonly outputs: OutputDefinition[] = [
-        { name: 'Result', outputType: 'any' }
+        { name: 'Result', outputType: 'core:dataframe' }
     ];
     
     readonly properties: PropertyDefinition[] = [
         { name: 'variable', label: 'Variable', type: 'string', defaultValue: 'x' },
+        { name: 'variableColumn', label: 'Variable Column', type: 'string', defaultValue: 'x' },
         { name: 'resultColumn', label: 'Result Column', type: 'string', defaultValue: 'y' }
     ];
 
@@ -29,47 +30,53 @@ export class EvaluateNode extends BaseNode {
         const exprStr = (typeof exprInput === 'string' ? exprInput : exprInput?.source) || '';
         const data = inputs['Data'];
         const variable = (properties['variable'] as string)?.trim() || 'x';
+        const variableColumn = (properties['variableColumn'] as string)?.trim() || 'x';
         const resultColumn = (properties['resultColumn'] as string)?.trim() || 'y';
 
-        if (!exprStr) return { 'Result': null };
+        if (!exprStr) {
+            return { 'Result': { __arqueroData: { [variableColumn]: [], [resultColumn]: [] } } };
+        }
 
         let compiled;
         try {
             compiled = math.compile(exprStr);
         } catch (e) {
             console.error('Error compiling expression:', e);
-            return { 'Result': null };
+            return { 'Result': { __arqueroData: { [variableColumn]: [], [resultColumn]: [] } } };
         }
 
         if (data === undefined || data === null) {
+            let res;
             try {
-                return { 'Result': compiled.evaluate() };
+                res = compiled.evaluate();
             } catch (e) {
-                return { 'Result': NaN };
+                res = NaN;
             }
+            const tableData = { [resultColumn]: [res] };
+            return { 'Result': { __arqueroData: tableData } };
         }
 
         if (typeof data === 'number') {
+            let res;
             try {
-                return { 'Result': compiled.evaluate({ [variable]: data }) };
+                res = compiled.evaluate({ [variable]: data });
             } catch (e) {
-                return { 'Result': NaN };
+                res = NaN;
             }
+            const tableData = { [variableColumn]: [data], [resultColumn]: [res] };
+            return { 'Result': { __arqueroData: tableData } };
         }
 
-        let isTable = false;
         let rows: any[] = [];
         
         if (Array.isArray(data)) {
             rows = data;
         } else if (data && typeof data.objects === 'function') {
-            isTable = true;
             rows = data.objects();
         } else if (data.Data && typeof data.Data.objects === 'function') {
-            isTable = true;
             rows = data.Data.objects();
         } else {
-            return { 'Result': null };
+            return { 'Result': { __arqueroData: { [variableColumn]: [], [resultColumn]: [] } } };
         }
 
         const outRows = rows.map(item => {
@@ -86,18 +93,12 @@ export class EvaluateNode extends BaseNode {
             }
             return isPlainObject
                 ? { ...item, [resultColumn]: res }
-                : { [variable]: item, [resultColumn]: res };
+                : { [variableColumn]: item, [resultColumn]: res };
         });
 
-        if (isTable) {
-            const table = outRows.length > 0 ? aq.from(outRows) : aq.from({ [variable]: [], [resultColumn]: [] });
-            return { 
-                'Result': table,
-                type: 'core:dataframe',
-                content: table
-            };
-        }
-
-        return { 'Result': outRows };
+        const tableData = outRows.length > 0 ? outRows : { [variableColumn]: [], [resultColumn]: [] };
+        return { 
+            'Result': { __arqueroData: tableData }
+        };
     }
 }
