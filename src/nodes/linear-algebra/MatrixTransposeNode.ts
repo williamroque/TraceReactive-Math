@@ -10,7 +10,7 @@ export class MatrixTransposeNode extends BaseNode {
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [
-        { name: 'A', acceptsType: ['math:matrix', 'core:array'] }
+        { name: 'A', acceptsType: ['math:matrix', 'core:number-array'] }
     ];
     
     readonly outputs: OutputDefinition[] = [

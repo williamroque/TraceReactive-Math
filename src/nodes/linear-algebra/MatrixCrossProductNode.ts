@@ -10,8 +10,8 @@ export class MatrixCrossProductNode extends BaseNode {
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [
-        { name: 'A', acceptsType: ['math:matrix', 'core:array'] },
-        { name: 'B', acceptsType: ['math:matrix', 'core:array'] }
+        { name: 'A', acceptsType: ['math:matrix', 'core:number-array'] },
+        { name: 'B', acceptsType: ['math:matrix', 'core:number-array'] }
     ];
     
     readonly outputs: OutputDefinition[] = [

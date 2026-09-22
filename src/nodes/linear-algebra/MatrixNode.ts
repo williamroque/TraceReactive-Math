@@ -10,12 +10,12 @@ export class MatrixNode extends BaseNode {
     readonly visible = true;
     
     readonly inputs: InputDefinition[] = [
-        { name: 'Array', acceptsType: 'core:array' }
+        { name: 'Array', acceptsType: 'core:number-array' }
     ];
     
     readonly outputs: OutputDefinition[] = [
         { name: 'Matrix', outputType: 'math:matrix' },
-        { name: 'Array', outputType: 'core:array' }
+        { name: 'Array', outputType: 'core:number-array' }
     ];
     
     readonly properties: PropertyDefinition[] = [
