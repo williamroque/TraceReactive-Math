@@ -4,9 +4,9 @@ import { MathCategory } from '../../category';
 import * as math from 'mathjs';
 import * as aq from 'arquero';
 
-export class EvaluateNode extends BaseNode {
-    readonly typeId = 'math-evaluate';
-    readonly displayName = 'Evaluate';
+export class EvaluateDataframeNode extends BaseNode {
+    readonly typeId = 'math-evaluate-dataframe';
+    readonly displayName = 'Evaluate—Dataframe';
     readonly category = MathCategory;
     readonly visible = true;
     

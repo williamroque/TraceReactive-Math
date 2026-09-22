@@ -1,5 +1,6 @@
 import { MathExpressionNode } from './nodes/expressions/MathExpressionNode';
-import { EvaluateNode } from './nodes/expressions/EvaluateNode';
+import { EvaluateDataframeNode } from './nodes/expressions/EvaluateDataframeNode';
+import { EvaluateScalarNode } from './nodes/expressions/EvaluateScalarNode';
 import { DifferentiateNode } from './nodes/symbolic/DifferentiateNode';
 import { IntegrateNode } from './nodes/symbolic/IntegrateNode';
 import { SolveNode } from './nodes/symbolic/SolveNode';
@@ -24,7 +25,8 @@ declare const traceReactive: TraceReactiveAPI;
 
 const nodes = [
     new MathExpressionNode(),
-    new EvaluateNode(),
+    new EvaluateDataframeNode(),
+    new EvaluateScalarNode(),
     new DifferentiateNode(),
     new IntegrateNode(),
     new SolveNode(),
