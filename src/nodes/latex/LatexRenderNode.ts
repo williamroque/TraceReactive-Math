@@ -36,6 +36,14 @@ export class LatexRenderNode extends RenderNode {
         { name: 'display', label: 'Display Mode', type: 'boolean', defaultValue: true }
     ];
 
+    private nodeCache: Record<string, {
+        texString: string;
+        fontSize: number;
+        color: string;
+        display: boolean;
+        output: any;
+    }> = {};
+
     async evaluate(inputs: Record<string, any>, properties: Record<string, any>): Promise<Record<string, any>> {
         const texString = String(inputs['LaTeX'] || '');
         if (!texString) return {};
@@ -43,6 +51,16 @@ export class LatexRenderNode extends RenderNode {
         const fontSize = Number(properties['fontSize']) || 24;
         const color = properties['color'] || '#ffffff';
         const display = !!properties['display'];
+        const nodeId = properties['_nodeId'] || 'unknown';
+
+        const cache = this.nodeCache[nodeId];
+        if (cache && 
+            cache.texString === texString && 
+            cache.fontSize === fontSize && 
+            cache.color === color && 
+            cache.display === display) {
+            return cache.output;
+        }
 
         try {
             const node = html.convert(texString, { display });
@@ -55,11 +73,21 @@ export class LatexRenderNode extends RenderNode {
             const svgString = adaptor.outerHTML(svgNode);
 
             const renderData = { type: 'core:svg', content: svgString };
-            return {
+            const output = {
                 'Render': renderData,
                 type: 'core:svg',
                 content: svgString
             };
+            
+            this.nodeCache[nodeId] = {
+                texString,
+                fontSize,
+                color,
+                display,
+                output
+            };
+            
+            return output;
         } catch (e) {
             console.error('Error rendering LaTeX:', e);
             return {};
